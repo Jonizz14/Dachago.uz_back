@@ -2,7 +2,7 @@ from rest_framework import viewsets, mixins
 from django.contrib.auth.models import User
 from .models import Product, Blog
 from .serializers import ProductSerializer, BlogSerializer, UserSerializer
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -20,7 +20,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all().order_by('-created_at')
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 class BlogViewSet(viewsets.ModelViewSet):
     queryset = Blog.objects.all().order_by('-published_date')
