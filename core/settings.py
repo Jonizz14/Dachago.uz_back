@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     # Local apps
     'gallery',
+    'accounts',
     'corsheaders',
 ]
 
