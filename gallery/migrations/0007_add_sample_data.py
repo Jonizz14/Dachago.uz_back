@@ -107,7 +107,7 @@ def remove_cottage_product(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gallery', '0003_delete_photopost_alter_product_price'),
+        ('gallery', '0006_remove_product_has_photo_alter_product_photo'),
     ]
 
     operations = [
