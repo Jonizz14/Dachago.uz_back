@@ -239,11 +239,11 @@ class Product(models.Model):
 
 
 class Blog(models.Model):
-    title_ru = models.CharField(max_length=255)
+    title_ru = models.CharField(max_length=255, blank=True, null=True)
     title_uz = models.CharField(max_length=255, blank=True, null=True)
     title_en = models.CharField(max_length=255, blank=True, null=True)
     
-    description_ru = models.TextField()
+    description_ru = models.TextField(blank=True, null=True)
     description_uz = models.TextField(blank=True, null=True)
     description_en = models.TextField(blank=True, null=True)
     
