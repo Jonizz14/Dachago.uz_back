@@ -4,7 +4,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gallery', '0004_add_sample_data'),
+        ('gallery', '0003_delete_photopost_alter_product_price'),
     ]
 
     operations = [
