@@ -16,7 +16,6 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     # Cottage Rules (multilingual)
-    # Правила заселения / Qoidalari
     corporate_allowed = models.BooleanField(default=True)
     corporate_rule_ru = models.TextField(blank=True, null=True, verbose_name="Корпоратив")
     corporate_rule_uz = models.TextField(blank=True, null=True, verbose_name="Korparativ")
@@ -43,7 +42,6 @@ class Product(models.Model):
     marriage_rule_en = models.TextField(blank=True, null=True, verbose_name="Marriage Certificate")
 
     # Schedule (multilingual)
-    # Расписание / Jadvallar
     check_in_time = models.CharField(max_length=10, default='19:00')
     check_in_rule_ru = models.TextField(blank=True, null=True, verbose_name="Заезд")
     check_in_rule_uz = models.TextField(blank=True, null=True, verbose_name="Kirish")
@@ -61,7 +59,6 @@ class Product(models.Model):
     quiet_hours_rule_en = models.TextField(blank=True, null=True, verbose_name="Quiet Hours")
 
     # Capacity (multilingual)
-    # Вместимость / Sig'im
     max_guests = models.IntegerField(default=12)
     guests_ru = models.TextField(blank=True, null=True, verbose_name="Гости")
     guests_uz = models.TextField(blank=True, null=True, verbose_name="Mehmonlar")
@@ -78,7 +75,6 @@ class Product(models.Model):
     beds_en = models.TextField(blank=True, null=True, verbose_name="Beds")
 
     # Media & Technologies (multilingual)
-    # Медиа и технологии / Media va texnologiyalar
     has_playstation = models.BooleanField(default=False)
     playstation_ru = models.TextField(blank=True, null=True, verbose_name="Плейстейшн")
     playstation_uz = models.TextField(blank=True, null=True, verbose_name="Playstation")
@@ -100,7 +96,6 @@ class Product(models.Model):
     computer_en = models.TextField(blank=True, null=True, verbose_name="Computer")
 
     # Kitchen (multilingual)
-    # Кухня / Oshxona
     has_kitchen = models.BooleanField(default=False)
     kitchen_ru = models.TextField(blank=True, null=True, verbose_name="Кухня")
     kitchen_uz = models.TextField(blank=True, null=True, verbose_name="Oshxona")
@@ -122,7 +117,6 @@ class Product(models.Model):
     gas_stove_en = models.TextField(blank=True, null=True, verbose_name="Gas Stove")
 
     # Outdoor (multilingual)
-    # На свежем воздухе / Havoda
     has_summer_kitchen = models.BooleanField(default=False)
     summer_kitchen_ru = models.TextField(blank=True, null=True, verbose_name="Летняя кухня")
     summer_kitchen_uz = models.TextField(blank=True, null=True, verbose_name="Yozgi oshxona")
@@ -139,7 +133,6 @@ class Product(models.Model):
     mangal_en = models.TextField(blank=True, null=True, verbose_name="BBQ")
 
     # Health & Wellness (multilingual)
-    # Оздоровительные / Sog'liq
     has_sauna = models.BooleanField(default=False)
     sauna_ru = models.TextField(blank=True, null=True, verbose_name="Финская сауна")
     sauna_uz = models.TextField(blank=True, null=True, verbose_name="Fin saunasi")
@@ -184,7 +177,6 @@ class Product(models.Model):
     outdoor_pool_width = models.IntegerField(blank=True, null=True)
 
     # Cleaning Services (multilingual)
-    # Услуги уборки / Tozalash xizmatlari
     has_washing_machine = models.BooleanField(default=False)
     washing_machine_ru = models.TextField(blank=True, null=True, verbose_name="Стиральная машина")
     washing_machine_uz = models.TextField(blank=True, null=True, verbose_name="Kir yuvish mashinasi")
@@ -196,7 +188,6 @@ class Product(models.Model):
     iron_en = models.TextField(blank=True, null=True, verbose_name="Iron")
 
     # Sports & Recreation (multilingual)
-    # Спорт и отдых / Sport va dam olish
     has_table_tennis = models.BooleanField(default=False)
     table_tennis_ru = models.TextField(blank=True, null=True, verbose_name="Настольный теннис")
     table_tennis_uz = models.TextField(blank=True, null=True, verbose_name="Stol tennisi")
@@ -218,7 +209,6 @@ class Product(models.Model):
     hookah_en = models.TextField(blank=True, null=True, verbose_name="Hookah")
 
     # Other (multilingual)
-    # Разное / Boshqa
     has_wifi = models.BooleanField(default=False)
     wifi_ru = models.TextField(blank=True, null=True, verbose_name="WI-FI")
     wifi_uz = models.TextField(blank=True, null=True, verbose_name="WI-FI")
@@ -229,12 +219,10 @@ class Product(models.Model):
     
     @property
     def title(self):
-        """Get title in available language (priority: Russian, Uzbek, English)"""
         return self.title_ru or self.title_uz or self.title_en
     
     @property
     def description(self):
-        """Get description in available language (priority: Russian, Uzbek, English)"""
         return self.description_ru or self.description_uz or self.description_en
 
 
@@ -252,3 +240,23 @@ class Blog(models.Model):
 
     def __str__(self):
         return self.title_ru
+
+
+class Contact(models.Model):
+    """Model for storing contact form submissions"""
+    name = models.CharField(max_length=255, verbose_name="Имя / Ism")
+    email = models.EmailField(verbose_name="Email / Pochta")
+    phone = models.CharField(max_length=50, blank=True, null=True, verbose_name="Телефон / Telefon")
+    subject = models.CharField(max_length=255, blank=True, null=True, verbose_name="Тема / Mavzu")
+    message = models.TextField(verbose_name="Сообщение / Xabar")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False, verbose_name="Прочитано / O'qilgan")
+    
+    def __str__(self):
+        return f"{self.name} - {self.email}"
+    
+    class Meta:
+        verbose_name = "Contact / Bog'lanish"
+        verbose_name_plural = "Contacts / Bog'lanishlar"
+        ordering = ['-created_at']

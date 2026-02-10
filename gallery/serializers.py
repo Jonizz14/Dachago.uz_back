@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Product, Blog
+from .models import Product, Blog, Contact
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -90,3 +90,13 @@ class BlogSerializer(serializers.ModelSerializer):
             'description_ru', 'description_uz', 'description_en',
             'photo', 'published_date'
         ]
+
+
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = [
+            'id', 'name', 'email', 'phone', 'subject', 'message',
+            'created_at', 'is_read'
+        ]
+        read_only_fields = ['created_at', 'is_read']
