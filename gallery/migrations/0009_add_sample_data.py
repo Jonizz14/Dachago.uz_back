@@ -4,16 +4,72 @@ from decimal import Decimal
 
 
 def create_cottage_product(apps, schema_editor):
-    Product = apps.get_model('gallery', 'Product')
-    Blog = apps.get_model('gallery', 'Blog')
+    # Use direct database access to avoid historical model issues
+    from django.db import connection
+    cursor = connection.cursor()
     
-    # Create cottage rental product
-    cottage = Product.objects.create(
+    # Insert the cottage product directly
+    cursor.execute("""
+        INSERT INTO gallery_product (
+            title_ru, title_uz, title_en,
+            description_ru, description_uz, description_en,
+            photo, price, created_at,
+            corporate_allowed, corporate_rule_ru, corporate_rule_uz, corporate_rule_en,
+            alcohol_allowed, alcohol_rule_ru, alcohol_rule_uz, alcohol_rule_en,
+            pets_allowed, pets_rule_ru, pets_rule_uz, pets_rule_en,
+            zags_allowed, zags_rule_ru, zags_rule_uz, zags_rule_en,
+            marriage_certificate_required, marriage_rule_ru, marriage_rule_uz, marriage_rule_en,
+            check_in_time, check_in_rule_ru, check_in_rule_uz, check_in_rule_en,
+            check_out_time, check_out_rule_ru, check_out_rule_uz, check_out_rule_en,
+            quiet_hours_start, quiet_hours_end, quiet_hours_rule_ru, quiet_hours_rule_uz, quiet_hours_rule_en,
+            max_guests, guests_ru, guests_uz, guests_en,
+            bedrooms, bedrooms_ru, bedrooms_uz, bedrooms_en,
+            beds, beds_ru, beds_uz, beds_en,
+            has_playstation, playstation_ru, playstation_uz, playstation_en,
+            has_karaoke, karaoke_ru, karaoke_uz, karaoke_en,
+            has_tv, tv_ru, tv_uz, tv_en,
+            has_computer, computer_ru, computer_uz, computer_en,
+            has_kitchen, kitchen_ru, kitchen_uz, kitchen_en,
+            has_microwave, microwave_ru, microwave_uz, microwave_en,
+            has_refrigerator, refrigerator_ru, refrigerator_uz, refrigerator_en,
+            has_gas_stove, gas_stove_ru, gas_stove_uz, gas_stove_en,
+            has_summer_kitchen, summer_kitchen_ru, summer_kitchen_uz, summer_kitchen_en,
+            has_barbecue, barbecue_ru, barbecue_uz, barbecue_en,
+            has_mangal, mangal_ru, mangal_uz, mangal_en,
+            has_sauna, sauna_ru, sauna_uz, sauna_en,
+            sauna_daily_limit_hours, sauna_rule_ru, sauna_rule_uz, sauna_rule_en,
+            has_salt_room, salt_room_ru, salt_room_uz, salt_room_en,
+            has_hammam, hammam_ru, hammam_uz, hammam_en,
+            has_jacuzzi, jacuzzi_ru, jacuzzi_uz, jacuzzi_en,
+            has_indoor_pool, indoor_pool_ru, indoor_pool_uz, indoor_pool_en,
+            indoor_pool_length, indoor_pool_width, indoor_pool_heated,
+            has_outdoor_pool, outdoor_pool_ru, outdoor_pool_uz, outdoor_pool_en,
+            outdoor_pool_length, outdoor_pool_width,
+            has_washing_machine, washing_machine_ru, washing_machine_uz, washing_machine_en,
+            has_iron, iron_ru, iron_uz, iron_en,
+            has_table_tennis, table_tennis_ru, table_tennis_uz, table_tennis_en,
+            has_billiards, billiards_ru, billiards_uz, billiards_en,
+            has_chess, chess_ru, chess_uz, chess_en,
+            has_hookah, hookah_ru, hookah_uz, hookah_en,
+            has_wifi, wifi_ru, wifi_uz, wifi_en
+        ) VALUES (
+            %s, %s, %s, %s, %s, %s, NULL, %s, %s,
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+        )
+    """, [
         # Basic Info
-        title_ru="Загородный коттедж «Dacha Go»",
-        title_uz="«Dacha Go» qishloq kotlaji",
-        title_en="Country Cottage «Dacha Go»",
-        description_ru="""В нашем коттедже есть все необходимые условия для отдыха с близкими.
+        "Загородный коттедж «Dacha Go»",
+        "«Dacha Go» qishloq kotlaji",
+        "Country Cottage «Dacha Go»",
+        """В нашем коттедже есть все необходимые условия для отдыха с близкими.
 
 ПРАВИЛА:
 ❌ Корпоративы запрещены
@@ -52,7 +108,7 @@ def create_cottage_product(apps, schema_editor):
 
 РАЗНОЕ:
 📶 WI-FI""",
-        description_uz="""Bizning koteljda yaqinlar bilan dam olish uchun barcha zarur sharoitlar mavjud.
+        """Bizning koteljda yaqinlar bilan dam olish uchun barcha zarur sharoitlar mavjud.
 
 QOIDALAR:
 ❌ Korparativlar taqiqlangan
@@ -91,7 +147,7 @@ XIZMATLAR:
 
 BOSHQA:
 📶 WI-FI""",
-        description_en="""Our cottage has all the necessary conditions for a relaxing getaway with loved ones.
+        """Our cottage has all the necessary conditions for a relaxing getaway with loved ones.
 
 RULES:
 ❌ Corporate events prohibited
@@ -130,231 +186,103 @@ SERVICES:
 
 MISCELLANEOUS:
 📶 WI-FI""",
-        price=Decimal('1500000.00'),
-        created_at=timezone.now(),
+        '1500000.00',
+        timezone.now(),
         
         # Rules (all False = prohibited)
-        corporate_allowed=False,
-        corporate_rule_ru="❌ Корпоративы запрещены",
-        corporate_rule_uz="❌ Korparativlar taqiqlangan",
-        corporate_rule_en="❌ Corporate events prohibited",
-        
-        alcohol_allowed=False,
-        alcohol_rule_ru="❌ Алкоголь запрещен",
-        alcohol_rule_uz="❌ Alkogol taqiqlangan",
-        alcohol_rule_en="❌ Alcohol prohibited",
-        
-        pets_allowed=False,
-        pets_rule_ru="❌ Домашние животные запрещены",
-        pets_rule_uz="❌ Uy hayvonlari taqiqlangan",
-        pets_rule_en="❌ Pets prohibited",
-        
-        zags_allowed=False,
-        zags_rule_ru="❌ ЗАГС запрещен",
-        zags_rule_uz="❌ RO'G taqiqlangan",
-        zags_rule_en="❌ Registry office prohibited",
-        
-        marriage_certificate_required=False,
-        marriage_rule_ru="⚠️ Если семейные гости приезжают без детей, потребуется предъявить свидетельство о браке",
-        marriage_rule_uz="⚠️ Agar oilaviy mehmonlar bolasiz kelsa, nikoh guvohnomasini ko'rsatish talab qilinadi",
-        marriage_rule_en="⚠️ If family guests arrive without children, marriage certificate may be required",
+        False, "❌ Корпоративы запрещены", "❌ Korparativlar taqiqlangan", "❌ Corporate events prohibited",
+        False, "❌ Алкоголь запрещен", "❌ Alkogol taqiqlangan", "❌ Alcohol prohibited",
+        False, "❌ Домашние животные запрещены", "❌ Uy hayvonlari taqiqlangan", "❌ Pets prohibited",
+        False, "❌ ЗАГС запрещен", "❌ RO'G taqiqlangan", "❌ Registry office prohibited",
+        False, "⚠️ Если семейные гости приезжают без детей, потребуется предъявить свидетельство о браке", "⚠️ Agar oilaviy mehmonlar bolasiz kelsa, nikoh guvohnomasini ko'rsatish talab qilinadi", "⚠️ If family guests arrive without children, marriage certificate may be required",
         
         # Schedule
-        check_in_time='19:00',
-        check_in_rule_ru="С 19:00",
-        check_in_rule_uz="19:00 dan",
-        check_in_rule_en="From 19:00",
-        
-        check_out_time='17:00',
-        check_out_rule_ru="До 17:00",
-        check_out_rule_uz="17:00 gacha",
-        check_out_rule_en="Until 17:00",
-        
-        quiet_hours_start='22:00',
-        quiet_hours_end='07:00',
-        quiet_hours_rule_ru="С 22:00 до 07:00",
-        quiet_hours_rule_uz="22:00 dan 07:00 gacha",
-        quiet_hours_rule_en="From 22:00 to 07:00",
+        '19:00', "С 19:00", "19:00 dan", "From 19:00",
+        '17:00', "До 17:00", "17:00 gacha", "Until 17:00",
+        '22:00', '07:00', "С 22:00 до 07:00", "22:00 dan 07:00 gacha", "From 22:00 to 07:00",
         
         # Capacity
-        max_guests=15,
-        guests_ru="Гости: 15",
-        guests_uz="Mehmonlar: 15",
-        guests_en="Guests: 15",
-        
-        bedrooms=4,
-        bedrooms_ru="Спальных комнат: 4",
-        bedrooms_uz="Uyqu xonalari: 4",
-        bedrooms_en="Bedrooms: 4",
-        
-        beds="15 односпальных, 1 двуспальная",
-        beds_ru="Кровати: 15 односпальных, 1 двуспальная",
-        beds_uz="Karavotlar: 15 ta bir kishilik, 1 ta ikki kishilik",
-        beds_en="Beds: 15 single, 1 double",
+        15, "Гости: 15", "Mehmonlar: 15", "Guests: 15",
+        4, "Спальных комнат: 4", "Uyqu xonalari: 4", "Bedrooms: 4",
+        "15 односпальных, 1 двуспальная", "Кровати: 15 односпальных, 1 двуспальная", "Karavotlar: 15 ta bir kishilik, 1 ta ikki kishilik", "Beds: 15 single, 1 double",
         
         # Media & Technologies
-        has_playstation=True,
-        playstation_ru="🎮 PlayStation",
-        playstation_uz="🎮 PlayStation",
-        playstation_en="🎮 PlayStation",
-        
-        has_karaoke=True,
-        karaoke_ru="🎤 Караоке",
-        karaoke_uz="🎤 Karaoke",
-        karaoke_en="🎤 Karaoke",
-        
-        has_tv=True,
-        tv_ru="📺 Телевизор",
-        tv_uz="📺 Televizor",
-        tv_en="📺 TV",
-        
-        has_computer=True,
-        computer_ru="🖥️ Компьютер",
-        computer_uz="🖥️ Kompyuter",
-        computer_en="🖥️ Computer",
+        True, "🎮 PlayStation", "🎮 PlayStation", "🎮 PlayStation",
+        True, "🎤 Караоке", "🎤 Karaoke", "🎤 Karaoke",
+        True, "📺 Телевизор", "📺 Televizor", "📺 TV",
+        True, "🖥️ Компьютер", "🖥️ Kompyuter", "🖥️ Computer",
         
         # Kitchen
-        has_kitchen=True,
-        kitchen_ru="🍳 Кухня",
-        kitchen_uz="🍳 Oshxona",
-        kitchen_en="🍳 Kitchen",
-        
-        has_microwave=True,
-        microwave_ru="🔌 Микроволновая печь",
-        microwave_uz="🔌 Mikroto'lqin pech",
-        microwave_en="🔌 Microwave",
-        
-        has_refrigerator=True,
-        refrigerator_ru="❄️ Холодильник",
-        refrigerator_uz="❄️ Muzlatgich",
-        refrigerator_en="❄️ Refrigerator",
-        
-        has_gas_stove=True,
-        gas_stove_ru="🔥 Газовая плита",
-        gas_stove_uz="🔥 Gaz plita",
-        gas_stove_en="🔥 Gas Stove",
+        True, "🍳 Кухня", "🍳 Oshxona", "🍳 Kitchen",
+        True, "🔌 Микроволновая печь", "🔌 Mikroto'lqin pech", "🔌 Microwave",
+        True, "❄️ Холодильник", "❄️ Muzlatgich", "❄️ Refrigerator",
+        True, "🔥 Газовая плита", "🔥 Gaz plita", "🔥 Gas Stove",
         
         # Outdoor
-        has_summer_kitchen=True,
-        summer_kitchen_ru="🍖 Летняя кухня",
-        summer_kitchen_uz="🍖 Yozgi oshxona",
-        summer_kitchen_en="🍖 Summer Kitchen",
-        
-        has_barbecue=True,
-        barbecue_ru="🍢 Барбекю",
-        barbecue_uz="🍢 Barbekyu",
-        barbecue_en="🍢 Barbecue",
-        
-        has_mangal=True,
-        mangal_ru="🔥 Мангал",
-        mangal_uz="🔥 Mangal",
-        mangal_en="🔥 BBQ",
+        True, "🍖 Летняя кухня", "🍖 Yozgi oshxona", "🍖 Summer Kitchen",
+        True, "🍢 Барбекю", "🍢 Barbekyu", "🍢 Barbecue",
+        True, "🔥 Мангал", "🔥 Mangal", "🔥 BBQ",
         
         # Health & Wellness
-        has_sauna=True,
-        sauna_ru="🧖 Финская сауна",
-        sauna_uz="🧖 Fin saunasi",
-        sauna_en="🧖 Finnish Sauna",
-        sauna_daily_limit_hours=3,
-        sauna_rule_ru="Дневной лимит - 3 часа",
-        sauna_rule_uz="Kunlik limit - 3 soat",
-        sauna_rule_en="Daily limit - 3 hours",
-        
-        has_salt_room=True,
-        salt_room_ru="🧂 Соляная комната",
-        salt_room_uz="🧂 Tuz xonasi",
-        salt_room_en="🧂 Salt Room",
-        
-        has_hammam=True,
-        hammam_ru="🧖 Турецкий хаммам",
-        hammam_uz="🧖 Turk hammomi",
-        hammam_en="🧖 Turkish Hammam",
-        
-        has_jacuzzi=True,
-        jacuzzi_ru="🛁 Джакузи",
-        jacuzzi_uz="🛁 Jakuzi",
-        jacuzzi_en="🛁 Jacuzzi",
+        True, "🧖 Финская сауна", "🧖 Fin saunasi", "🧖 Finnish Sauna",
+        3, "Дневной лимит - 3 часа", "Kunlik limit - 3 soat", "Daily limit - 3 hours",
+        True, "🧂 Соляная комната", "🧂 Tuz xonasi", "🧂 Salt Room",
+        True, "🧖 Турецкий хаммам", "🧖 Turk hammomi", "🧖 Turkish Hammam",
+        True, "🛁 Джакузи", "🛁 Jakuzi", "🛁 Jacuzzi",
         
         # Pools
-        has_indoor_pool=True,
-        indoor_pool_ru="🏊 Крытый бассейн 8x4м² с подогревом",
-        indoor_pool_uz="🏊 Yopiq basseyn 8x4m² qizdiriladi",
-        indoor_pool_en="🏊 Indoor pool 8x4m² heated",
-        indoor_pool_length=8,
-        indoor_pool_width=4,
-        indoor_pool_heated=True,
-        
-        has_outdoor_pool=True,
-        outdoor_pool_ru="🏊 Открытый бассейн 10х5м²",
-        outdoor_pool_uz="🏊 Ochiq basseyn 10x5m²",
-        outdoor_pool_en="🏊 Outdoor pool 10x5m²",
-        outdoor_pool_length=10,
-        outdoor_pool_width=5,
+        True, "🏊 Крытый бассейн 8x4м² с подогревом", "🏊 Yopiq basseyn 8x4m² qizdiriladi", "🏊 Indoor pool 8x4m² heated",
+        8, 4, True,
+        True, "🏊 Открытый бассейн 10х5м²", "🏊 Ochiq basseyn 10x5m²", "🏊 Outdoor pool 10x5m²",
+        10, 5,
         
         # Cleaning Services
-        has_washing_machine=True,
-        washing_machine_ru="🧺 Стиральная машина",
-        washing_machine_uz="🧺 Kir yuvish mashinasi",
-        washing_machine_en="🧺 Washing Machine",
-        
-        has_iron=True,
-        iron_ru="🔧 Утюг",
-        iron_uz="🔧 Dazmol",
-        iron_en="🔧 Iron",
+        True, "🧺 Стиральная машина", "🧺 Kir yuvish mashinasi", "🧺 Washing Machine",
+        True, "🔧 Утюг", "🔧 Dazmol", "🔧 Iron",
         
         # Sports & Recreation
-        has_table_tennis=True,
-        table_tennis_ru="🏓 Настольный теннис",
-        table_tennis_uz="🏓 Stol tennisi",
-        table_tennis_en="🏓 Table Tennis",
-        
-        has_billiards=True,
-        billiards_ru="🎱 Бильярд",
-        billiards_uz="🎱 Bilyard",
-        billiards_en="🎱 Billiards",
-        
-        has_chess=True,
-        chess_ru="♟️ Шахматы",
-        chess_uz="♟️ Shaxmat",
-        chess_en="♟️ Chess",
-        
-        has_hookah=True,
-        hookah_ru="🍃 Кальян",
-        hookah_uz="🍃 Kalyan",
-        hookah_en="🍃 Hookah",
+        True, "🏓 Настольный теннис", "🏓 Stol tennisi", "🏓 Table Tennis",
+        True, "🎱 Бильярд", "🎱 Bilyard", "🎱 Billiards",
+        True, "♟️ Шахматы", "♟️ Shaxmat", "♟️ Chess",
+        True, "🍃 Кальян", "🍃 Kalyan", "🍃 Hookah",
         
         # Other
-        has_wifi=True,
-        wifi_ru="📶 WI-FI",
-        wifi_uz="📶 WI-FI",
-        wifi_en="📶 WI-FI",
-    )
+        True, "📶 WI-FI", "📶 WI-FI", "📶 WI-FI",
+    ])
     
-    # Create sample blog posts
-    Blog.objects.create(
-        title_ru="Отдых в загородном коттедже",
-        title_uz="Qishloq koteljida dam olish",
-        title_en="Country Cottage Vacation",
-        description_ru="Отличный отдых вдали от городской суеты. Наш коттедж идеально подходит для семейного отдыха.",
-        description_uz="Shahar shovqinidan uzoqda ajoyib dam olish. Bizning kotelj oilaviy dam olish uchun juda mos.",
-        description_en="Great vacation away from city noise. Our cottage is perfect for family recreation.",
-    )
+    # Insert sample blog posts
+    cursor.execute("""
+        INSERT INTO gallery_blog (title_ru, title_uz, title_en, description_ru, description_uz, description_en, photo, published_date)
+        VALUES (%s, %s, %s, %s, %s, %s, NULL, %s)
+    """, [
+        "Отдых в загородном коттедже",
+        "Qishloq koteljida dam olish",
+        "Country Cottage Vacation",
+        "Отличный отдых вдали от городской суеты. Наш коттедж идеально подходит для семейного отдыха.",
+        "Shahar shovqinidan uzoqda ajoyib dam olish. Bizning kotelj oilaviy dam olish uchun juda mos.",
+        "Great vacation away from city noise. Our cottage is perfect for family recreation.",
+        timezone.now()
+    ])
     
-    Blog.objects.create(
-        title_ru="Турецкий хаммам и джакузи",
-        title_uz="Turk hammomi va jakuzi",
-        title_en="Turkish Hammam and Jacuzzi",
-        description_ru="Расслабьтесь в нашем турецком хаммаме или насладитесь джакузи после долгого дня.",
-        description_uz="Uzun kundan so'ng bizning Turk hammomida yoki jakuzida dam oling.",
-        description_en="Relax in our Turkish hammam or enjoy the jacuzzi after a long day.",
-    )
+    cursor.execute("""
+        INSERT INTO gallery_blog (title_ru, title_uz, title_en, description_ru, description_uz, description_en, photo, published_date)
+        VALUES (%s, %s, %s, %s, %s, %s, NULL, %s)
+    """, [
+        "Турецкий хаммам и джакузи",
+        "Turk hammomi va jakuzi",
+        "Turkish Hammam and Jacuzzi",
+        "Расслабьтесь в нашем турецком хаммаме или насладитесь джакузи после долгого дня.",
+        "Uzun kundan so'ng bizning Turk hammomida yoki jakuzida dam oling.",
+        "Relax in our Turkish hammam or enjoy the jacuzzi after a long day.",
+        timezone.now()
+    ])
 
 
 def remove_cottage_product(apps, schema_editor):
-    Product = apps.get_model('gallery', 'Product')
-    Blog = apps.get_model('gallery', 'Blog')
-    Product.objects.filter(title_ru="Загородный коттедж «Dacha Go»").delete()
-    Blog.objects.all().delete()
+    from django.db import connection
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM gallery_product WHERE title_ru = %s", ["Загородный коттедж «Dacha Go»"])
+    cursor.execute("DELETE FROM gallery_blog")
 
 
 class Migration(migrations.Migration):
