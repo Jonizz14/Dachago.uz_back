@@ -32,9 +32,11 @@ class ProductSerializer(serializers.ModelSerializer):
             'quiet_hours_start', 'quiet_hours_end', 'quiet_hours_rule_ru', 'quiet_hours_rule_uz', 'quiet_hours_rule_en',
             
             # Capacity
-            'max_guests', 'guests_ru', 'guests_uz', 'guests_en',
-            'bedrooms', 'bedrooms_ru', 'bedrooms_uz', 'bedrooms_en',
+            'max_guests', 'bedrooms', 'bathrooms', 'floors', 'total_area', 'land_area', 'parking_places',
             'beds', 'beds_ru', 'beds_uz', 'beds_en',
+            
+            # Amenities (additional)
+            'has_tapchan', 'has_fireplace',
             
             # Media & Technologies
             'has_playstation', 'playstation_ru', 'playstation_uz', 'playstation_en',

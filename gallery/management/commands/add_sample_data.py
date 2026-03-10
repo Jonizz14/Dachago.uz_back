@@ -35,9 +35,7 @@ class Command(BaseCommand):
 • Тихие часы: с 22:00 до 07:00
 
 ВМЕСТИМОСТЬ:
-• Гости: 15 человек
-• Спальных комнат: 4
-• Кровати: 15 односпальных, 1 двуспальная
+• См. детали ниже (количество гостей и комнат указано в соответствующих полях)
 
 УДОБСТВА:
 🎮 PlayStation | 🎤 Караоке | 🖥️ Компьютер | 🏓 Настольный теннис
@@ -74,9 +72,7 @@ JADVAL:
 • Tinch soatlar: 22:00 dan 07:00 gacha
 
 SIG'IM:
-• Mehmonlar: 15 kishi
-• Uyqu xonalari: 4 ta
-• Karavotlar: 15 ta bir kishilik, 1 ta ikki kishilik
+• Batafsil ma'lumot pastda (mehmonlar va xonalar soni alohida ko'rsatilgan)
 
 QULAYLIKLAR:
 🎮 PlayStation | 🎤 Karaoke | 🖥️ Kompyuter | 🏓 Stol tennisi
@@ -111,9 +107,7 @@ SCHEDULE:
 • Quiet hours: from 22:00 to 07:00
 
 CAPACITY:
-• Guests: 15 people
-• Bedrooms: 4
-• Beds: 15 single, 1 double
+• See details below (guest and bedroom counts are in dedicated fields)
 
 AMENITIES:
 🎮 PlayStation | 🎤 Karaoke | 🖥️ Computer | 🏓 Table tennis
@@ -156,9 +150,14 @@ MISCELLANEOUS:
             
             # Capacity
             max_guests=15,
-            guests_ru="Гости: 15",
             bedrooms=4,
-            bedrooms_ru="Спальных комнат: 4",
+            bathrooms=2,
+            floors=2,
+            total_area=350,
+            land_area=8.5,
+            parking_places=3,
+            has_tapchan=True,
+            has_fireplace=True,
             beds="15 односпальных, 1 двуспальная",
             beds_ru="Кровати: 15 односпальных, 1 двуспальная",
             
@@ -264,9 +263,14 @@ MISCELLANEOUS:
             
             # Capacity
             max_guests=10,
-            guests_ru="Гости: 10",
             bedrooms=3,
-            bedrooms_ru="Спальных комнат: 3",
+            bathrooms=1,
+            floors=1,
+            total_area=180,
+            land_area=6.0,
+            parking_places=2,
+            has_tapchan=True,
+            has_fireplace=False,
             beds="8 односпальных, 1 двуспальная",
             beds_ru="Кровати: 8 односпальных, 1 двуспальная",
             
@@ -355,9 +359,14 @@ MISCELLANEOUS:
             
             # Capacity
             max_guests=8,
-            guests_ru="Гости: 8",
             bedrooms=2,
-            bedrooms_ru="Спальных комнат: 2",
+            bathrooms=1,
+            floors=1,
+            total_area=120,
+            land_area=4.0,
+            parking_places=1,
+            has_tapchan=True,
+            has_fireplace=False,
             beds="6 односпальных, 1 двуспальная",
             beds_ru="Кровати: 6 односпальных, 1 двуспальная",
             
@@ -433,9 +442,14 @@ MISCELLANEOUS:
             
             # Capacity
             max_guests=12,
-            guests_ru="Гости: 12",
             bedrooms=3,
-            bedrooms_ru="Спальных комнат: 3",
+            bathrooms=1,
+            floors=1,
+            total_area=150,
+            land_area=5.0,
+            parking_places=2,
+            has_tapchan=True,
+            has_fireplace=False,
             beds="10 односпальных",
             beds_ru="Кровати: 10 односпальных",
             

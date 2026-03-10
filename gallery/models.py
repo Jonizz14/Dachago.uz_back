@@ -58,21 +58,23 @@ class Product(models.Model):
     quiet_hours_rule_uz = models.TextField(blank=True, null=True, verbose_name="Tinch soatlar")
     quiet_hours_rule_en = models.TextField(blank=True, null=True, verbose_name="Quiet Hours")
 
-    # Capacity (multilingual)
-    max_guests = models.IntegerField(default=12)
-    guests_ru = models.TextField(blank=True, null=True, verbose_name="Гости")
-    guests_uz = models.TextField(blank=True, null=True, verbose_name="Mehmonlar")
-    guests_en = models.TextField(blank=True, null=True, verbose_name="Guests")
-    
-    bedrooms = models.IntegerField(default=4)
-    bedrooms_ru = models.TextField(blank=True, null=True, verbose_name="Спальных комнат")
-    bedrooms_uz = models.TextField(blank=True, null=True, verbose_name="Uyqu xonalari")
-    bedrooms_en = models.TextField(blank=True, null=True, verbose_name="Bedrooms")
-    
+    # Capacity
+    max_guests = models.IntegerField(default=12, verbose_name="Макс. гостей")
+    bedrooms = models.IntegerField(default=4, verbose_name="Спальни")
+    bathrooms = models.IntegerField(default=1, verbose_name="Санузлы")
+    floors = models.IntegerField(default=1, verbose_name="Этажность")
+    total_area = models.IntegerField(default=0, verbose_name="Площадь дома (м²)")
+    land_area = models.DecimalField(max_digits=5, decimal_places=1, default=0, verbose_name="Площадь участка (соток)")
+    parking_places = models.IntegerField(default=0, verbose_name="Парковочных мест")
+
     beds = models.TextField(blank=True, null=True, verbose_name="Кровати")
     beds_ru = models.TextField(blank=True, null=True)
     beds_uz = models.TextField(blank=True, null=True, verbose_name="Karavotlar")
     beds_en = models.TextField(blank=True, null=True, verbose_name="Beds")
+
+    # Amenities (additional)
+    has_tapchan = models.BooleanField(default=False, verbose_name="Тапчан")
+    has_fireplace = models.BooleanField(default=False, verbose_name="Камин")
 
     # Media & Technologies (multilingual)
     has_playstation = models.BooleanField(default=False)

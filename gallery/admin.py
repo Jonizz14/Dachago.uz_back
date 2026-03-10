@@ -4,9 +4,9 @@ from .models import Product, Blog, Contact
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('title_ru', 'price', 'created_at')
+    list_display = ('title_ru', 'price', 'max_guests', 'bedrooms', 'bathrooms', 'created_at')
     search_fields = ('title_ru', 'title_uz', 'title_en')
-    list_filter = ('created_at', 'price')
+    list_filter = ('created_at', 'price', 'bedrooms', 'bathrooms', 'has_tapchan')
 
 
 @admin.register(Blog)
