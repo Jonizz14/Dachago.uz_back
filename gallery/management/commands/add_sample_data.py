@@ -7,510 +7,123 @@ class Command(BaseCommand):
     help = 'Add sample cottage products and blog posts'
 
     def handle(self, *args, **options):
-        # Check if data already exists
-        if Product.objects.exists():
-            self.stdout.write(self.style.WARNING('Sample data already exists. Skipping.'))
-            return
+        # Clear existing data
+        Product.objects.all().delete()
+        Blog.objects.all().delete()
+        self.stdout.write(self.style.SUCCESS('Cleared existing data.'))
 
-        self.stdout.write('Creating sample cottage products...')
+        self.stdout.write('Creating 25 detailed multilingual cottage products...')
+        import random
         
-        # Cottage 1: Dacha Go Premium
-        cottage1 = Product.objects.create(
-            title_ru="Загородный коттедж «Dacha Go»",
-            title_uz="«Dacha Go» qishloq kotlaji",
-            title_en="Country Cottage «Dacha Go»",
-            description_ru="""В нашем коттедже есть все необходимые условия для отдыха с близкими.
+        # Data lists for variety
+        locations = [
+            {"ru": "Чорвок", "uz": "Chorvoq", "en": "Chorvok"},
+            {"ru": "Хумсан", "uz": "Humsan", "en": "Humsan"},
+            {"ru": "Бочка", "uz": "Bochka", "en": "Bochka"},
+            {"ru": "Юсупхона", "uz": "Yusuphona", "en": "Yusuphona"},
+            {"ru": "Бричмулла", "uz": "Brichmulla", "en": "Brichmulla"},
+            {"ru": "Акча", "uz": "Akcha", "en": "Akcha"},
+            {"ru": "Янгиабад", "uz": "Yangiabod", "en": "Yangiabad"},
+            {"ru": "Сиджак", "uz": "Sijjak", "en": "Sijak"},
+        ]
+        
+        styles = [
+            {"ru": "Премиум Коттедж", "uz": "Premium Kottej", "en": "Premium Cottage"},
+            {"ru": "Семейная Дача", "uz": "Oilaviy Dacha", "en": "Family Dacha"},
+            {"ru": "Современная Вилла", "uz": "Zamonaviy Villa", "en": "Modern Villa"},
+            {"ru": "Уютный Домик", "uz": "Shinam Uy", "en": "Cozy House"},
+            {"ru": "Горная Резиденция", "uz": "Tog' Bag'ridagi Qasrxona", "en": "Mountain Residence"},
+        ]
 
-ПРАВИЛА:
-❌ Корпоративы запрещены
-❌ Алкоголь запрещен
-❌ Домашние животные запрещены
-❌ ЗАГС запрещен
+        descriptions = [
+            {
+                "ru": "Прекрасное место для отдыха с семьей и друзьями. Чистый воздух, отличный вид и все удобства.",
+                "uz": "Oila va do'stlar bilan dam olish uchun ajoyib joy. Toza havo, go'zal manzara va barcha qulayliklar.",
+                "en": "A wonderful place to relax with family and friends. Fresh air, great views and all amenities."
+            },
+            {
+                "ru": "Элитный отдых в живописном районе. Бассейн с подогревом, сауна и современная кухня.",
+                "uz": "Go'zal hududda elita dam olish maskani. Isitiladigan basseyn, sauna va zamonaviy oshxona.",
+                "en": "Elite relaxation in a picturesque area. Heated pool, sauna and modern kitchen."
+            },
+            {
+                "ru": "Тихое и спокойное место для тех, кто хочет отдохнуть от городской суеты.",
+                "uz": "Shahar shovqinidan dam olmoqchi bo'lganlar uchun sokin va tinch joy.",
+                "en": "A quiet and peaceful place for those who want to take a break from the city bustle."
+            }
+        ]
 
-⚠️ Если семейные гости приезжают без детей, потребуется предъявить свидетельство о браке.
+        for i in range(1, 26):
+            loc = random.choice(locations)
+            style = random.choice(styles)
+            desc = random.choice(descriptions)
+            
+            title_ru = f"{style['ru']} «{loc['ru']} View» №{i}"
+            title_uz = f"«{loc['uz']} View» {style['uz']} №{i}"
+            title_en = f"{style['en']} «{loc['en']} View» #{i}"
+            
+            # Numeric fields
+            max_guests = random.randint(6, 25)
+            bedrooms = random.randint(2, 7)
+            bathrooms = random.randint(1, 3)
+            floors = random.randint(1, 3)
+            total_area = random.randint(150, 500)
+            land_area = Decimal(random.randint(4, 15))
+            parking_places = random.randint(2, 5)
+            
+            price = Decimal(random.randint(800, 4500)) * 1000
 
-РАСПИСАНИЕ:
-• Заезд: с 19:00
-• Выезд: до 17:00
-• Тихие часы: с 22:00 до 07:00
+            Product.objects.create(
+                title_ru=title_ru,
+                title_uz=title_uz,
+                title_en=title_en,
+                description_ru=desc['ru'],
+                description_uz=desc['uz'],
+                description_en=desc['en'],
+                price=price,
+                
+                # Capacity (NUMBERS ONLY)
+                max_guests=max_guests,
+                bedrooms=bedrooms,
+                bathrooms=bathrooms,
+                floors=floors,
+                total_area=total_area,
+                land_area=land_area,
+                parking_places=parking_places,
+                
+                # Rules
+                corporate_allowed=random.choice([True, False]),
+                alcohol_allowed=random.choice([True, False]),
+                pets_allowed=random.choice([True, False]),
+                zags_allowed=random.choice([True, False]),
+                marriage_certificate_required=random.choice([True, False]),
+                
+                # Amenities
+                has_sauna=random.choice([True, False]),
+                has_indoor_pool=random.choice([True, False]),
+                has_outdoor_pool=True,
+                has_wifi=True,
+                has_tapchan=random.choice([True, True, False]),
+                has_fireplace=random.choice([True, False]),
+                has_karaoke=random.choice([True, False]),
+                has_playstation=random.choice([True, False]),
+                has_kitchen=True,
+                has_refrigerator=True,
+                has_gas_stove=True,
+                
+                # Times
+                check_in_time="14:00",
+                check_out_time="12:00",
+            )
 
-ВМЕСТИМОСТЬ:
-• См. детали ниже (количество гостей и комнат указано в соответствующих полях)
-
-УДОБСТВА:
-🎮 PlayStation | 🎤 Караоке | 🖥️ Компьютер | 🏓 Настольный теннис
-🎱 Бильярд | 🏊 Крытый бассейн 8x4м² с подогревом | 🏊 Открытый бассейн 10х5м²
-🍃 Кальян
-
-НА СВЕЖЕМ ВОЗДУХЕ:
-🍖 Летняя кухня | 🍢 Барбекю | 🔥 Мангал
-
-ОЗДОРОВИТЕЛЬНЫЕ:
-🧖 Финская сауна | 🛁 Джакузи | 🧖 Турецкий хаммам
-
-СПОРТ И ОТДЫХ:
-🏓 Настольный теннис | 🎱 Бильярд | ♟️ Шахматы
-
-УСЛУГИ:
-🧺 Стиральная машина | 🔧 Утюг
-
-РАЗНОЕ:
-📶 WI-FI""",
-            description_uz="""Bizning koteljda yaqinlar bilan dam olish uchun barcha zarur sharoitlar mavjud.
-
-QOIDALAR:
-❌ Korparativlar taqiqlangan
-❌ Alkogol taqiqlangan
-❌ Uy hayvonlari taqiqlangan
-❌ RO'G taqiqlangan
-
-⚠️ Agar oilaviy mehmonlar bolasiz kelsa, nikoh guvohnomasini ko'rsatish talab qilinadi.
-
-JADVAL:
-• Kirish: 19:00 dan
-• Chiqish: 17:00 gacha
-• Tinch soatlar: 22:00 dan 07:00 gacha
-
-SIG'IM:
-• Batafsil ma'lumot pastda (mehmonlar va xonalar soni alohida ko'rsatilgan)
-
-QULAYLIKLAR:
-🎮 PlayStation | 🎤 Karaoke | 🖥️ Kompyuter | 🏓 Stol tennisi
-🎱 Bilyard | 🏊 Yopiq basseyn 8x4m² qizdiriladi | 🏊 Ochiq basseyn 10x5m²
-🍃 Kalyan
-
-HAVODA:
-🍖 Yozgi oshxona | 🍢 Barbekyu | 🔥 Mangal
-
-SOG'LIQ:
-🧖 Fin saunasi | 🛁 Jakuzi | 🧖 Turk hammomi
-
-SPORT VA DAM OLISH:
-🏓 Stol tennisi | 🎱 Bilyard | ♟️ Shaxmat
-
-XIZMATLAR:
-🧺 Kir yuvish mashinasi | 🔧 Dazmol
-
-BOSHQA:
-📶 WI-FI""",
-            description_en="""Our cottage has all the necessary conditions for a relaxing getaway with loved ones.
-
-RULES:
-❌ Corporate events prohibited
-❌ Alcohol prohibited
-❌ Pets prohibited
-❌ Registry office ceremonies prohibited
-
-SCHEDULE:
-• Check-in: from 19:00
-• Check-out: until 17:00
-• Quiet hours: from 22:00 to 07:00
-
-CAPACITY:
-• See details below (guest and bedroom counts are in dedicated fields)
-
-AMENITIES:
-🎮 PlayStation | 🎤 Karaoke | 🖥️ Computer | 🏓 Table tennis
-🎱 Billiards | 🏊 Indoor pool 8x4m² heated | 🏊 Outdoor pool 10x5m²
-🍃 Hookah
-
-OUTDOOR:
-🍖 Summer kitchen | 🍢 Barbecue | 🔥 BBQ
-
-HEALTH & WELLNESS:
-🧖 Finnish sauna | 🛁 Jacuzzi | 🧖 Turkish hammam
-
-SPORTS & RECREATION:
-🏓 Table tennis | 🎱 Billiards | ♟️ Chess
-
-MISCELLANEOUS:
-📶 WI-FI""",
-            price=Decimal('1500000.00'),
-            
-            # Rules
-            corporate_allowed=False,
-            corporate_rule_ru="❌ Корпоративы запрещены",
-            alcohol_allowed=False,
-            alcohol_rule_ru="❌ Алкоголь запрещен",
-            pets_allowed=False,
-            pets_rule_ru="❌ Домашние животные запрещены",
-            zags_allowed=False,
-            zags_rule_ru="❌ ЗАГС запрещен",
-            marriage_certificate_required=False,
-            marriage_rule_ru="⚠️ Требуется свидетельство о браке",
-            
-            # Schedule
-            check_in_time='19:00',
-            check_in_rule_ru="С 19:00",
-            check_out_time='17:00',
-            check_out_rule_ru="До 17:00",
-            quiet_hours_start='22:00',
-            quiet_hours_end='07:00',
-            quiet_hours_rule_ru="С 22:00 до 07:00",
-            
-            # Capacity
-            max_guests=15,
-            bedrooms=4,
-            bathrooms=2,
-            floors=2,
-            total_area=350,
-            land_area=8.5,
-            parking_places=3,
-            has_tapchan=True,
-            has_fireplace=True,
-            beds="15 односпальных, 1 двуспальная",
-            beds_ru="Кровати: 15 односпальных, 1 двуспальная",
-            
-            # Media & Technologies
-            has_playstation=True,
-            playstation_ru="🎮 PlayStation",
-            has_karaoke=True,
-            karaoke_ru="🎤 Караоке",
-            has_tv=True,
-            tv_ru="📺 Телевизор",
-            has_computer=True,
-            computer_ru="🖥️ Компьютер",
-            
-            # Kitchen
-            has_kitchen=True,
-            kitchen_ru="🍳 Кухня",
-            has_microwave=True,
-            has_refrigerator=True,
-            has_gas_stove=True,
-            
-            # Outdoor
-            has_summer_kitchen=True,
-            summer_kitchen_ru="🍖 Летняя кухня",
-            has_barbecue=True,
-            barbecue_ru="🍢 Барбекю",
-            has_mangal=True,
-            mangal_ru="🔥 Мангал",
-            
-            # Health & Wellness
-            has_sauna=True,
-            sauna_ru="🧖 Финская сауна",
-            sauna_daily_limit_hours=3,
-            sauna_rule_ru="Дневной лимит - 3 часа",
-            has_salt_room=True,
-            salt_room_ru="🧂 Соляная комната",
-            has_hammam=True,
-            hammam_ru="🧖 Турецкий хаммам",
-            has_jacuzzi=True,
-            jacuzzi_ru="🛁 Джакузи",
-            
-            # Pools
-            has_indoor_pool=True,
-            indoor_pool_ru="🏊 Крытый бассейн 8x4м² с подогревом",
-            indoor_pool_length=8,
-            indoor_pool_width=4,
-            indoor_pool_heated=True,
-            has_outdoor_pool=True,
-            outdoor_pool_ru="🏊 Открытый бассейн 10х5м²",
-            outdoor_pool_length=10,
-            outdoor_pool_width=5,
-            
-            # Cleaning Services
-            has_washing_machine=True,
-            washing_machine_ru="🧺 Стиральная машина",
-            has_iron=True,
-            iron_ru="🔧 Утюг",
-            
-            # Sports & Recreation
-            has_table_tennis=True,
-            table_tennis_ru="🏓 Настольный теннис",
-            has_billiards=True,
-            billiards_ru="🎱 Бильярд",
-            has_chess=True,
-            chess_ru="♟️ Шахматы",
-            has_hookah=True,
-            hookah_ru="🍃 Кальян",
-            
-            # Other
-            has_wifi=True,
-            wifi_ru="📶 WI-FI",
-        )
-        self.stdout.write(f'Created cottage: {cottage1.title_ru}')
-
-        # Cottage 2: Humsan Hills
-        cottage2 = Product.objects.create(
-            title_ru="Дача «Humsan Hills»",
-            title_uz="«Humsan Hills» dam olish maskani",
-            title_en="Cottage «Humsan Hills»",
-            description_ru="Прекрасная дача для семейного отдыха вдали от городской суеты.",
-            description_uz="Shahar shovqinidan uzoqda oilaviy dam olish uchun ajoyib dam olish maskani.",
-            description_en="Beautiful cottage for family vacation away from city noise.",
-            price=Decimal('1200000.00'),
-            
-            # Rules
-            corporate_allowed=True,
-            corporate_rule_ru="✅ Корпоративы разрешены",
-            alcohol_allowed=True,
-            alcohol_rule_ru="✅ Алкоголь разрешен",
-            pets_allowed=True,
-            pets_rule_ru="✅ Домашние животные разрешены",
-            zags_allowed=True,
-            zags_rule_ru="✅ ЗАГС разрешен",
-            marriage_certificate_required=False,
-            
-            # Schedule
-            check_in_time='14:00',
-            check_in_rule_ru="С 14:00",
-            check_out_time='12:00',
-            check_out_rule_ru="До 12:00",
-            quiet_hours_start='23:00',
-            quiet_hours_end='08:00',
-            quiet_hours_rule_ru="С 23:00 до 08:00",
-            
-            # Capacity
-            max_guests=10,
-            bedrooms=3,
-            bathrooms=1,
-            floors=1,
-            total_area=180,
-            land_area=6.0,
-            parking_places=2,
-            has_tapchan=True,
-            has_fireplace=False,
-            beds="8 односпальных, 1 двуспальная",
-            beds_ru="Кровати: 8 односпальных, 1 двуспальная",
-            
-            # Media & Technologies
-            has_playstation=False,
-            has_karaoke=True,
-            karaoke_ru="🎤 Караоке",
-            has_tv=True,
-            tv_ru="📺 Телевизор",
-            has_computer=False,
-            
-            # Kitchen
-            has_kitchen=True,
-            kitchen_ru="🍳 Кухня",
-            has_microwave=True,
-            has_refrigerator=True,
-            has_gas_stove=True,
-            
-            # Outdoor
-            has_summer_kitchen=True,
-            summer_kitchen_ru="🍖 Летняя кухня",
-            has_barbecue=True,
-            barbecue_ru="🍢 Барбекю",
-            has_mangal=True,
-            mangal_ru="🔥 Мангал",
-            
-            # Health & Wellness
-            has_sauna=False,
-            has_salt_room=False,
-            has_hammam=True,
-            hammam_ru="🧖 Турецкий хаммам",
-            has_jacuzzi=True,
-            jacuzzi_ru="🛁 Джакузи",
-            
-            # Pools
-            has_indoor_pool=False,
-            has_outdoor_pool=True,
-            outdoor_pool_ru="🏊 Открытый бассейн",
-            outdoor_pool_length=6,
-            outdoor_pool_width=4,
-            
-            # Sports & Recreation
-            has_table_tennis=False,
-            has_billiards=True,
-            billiards_ru="🎱 Бильярд",
-            has_chess=True,
-            chess_ru="♟️ Шахматы",
-            has_hookah=True,
-            hookah_ru="🍃 Кальян",
-            
-            # Other
-            has_wifi=True,
-            wifi_ru="📶 WI-FI",
-        )
-        self.stdout.write(f'Created cottage: {cottage2.title_ru}')
-
-        # Cottage 3: Halal Dacha
-        cottage3 = Product.objects.create(
-            title_ru="Халяль Дача",
-            title_uz="Halal Dam Olish Maskani",
-            title_en="Halal Cottage",
-            description_ru="Отличная дача для семейного отдыха с соблюдением всех халяль традиций.",
-            description_uz="Barcha halal an'analariga rioya qilgan holda oilaviy dam olish uchun ajoyib maskan.",
-            description_en="Great cottage for family vacation with all halal traditions observed.",
-            price=Decimal('1000000.00'),
-            
-            # Rules - Halal
-            corporate_allowed=False,
-            corporate_rule_ru="❌ Корпоративы запрещены",
-            alcohol_allowed=False,
-            alcohol_rule_ru="❌ Алкоголь запрещен",
-            pets_allowed=True,
-            pets_rule_ru="✅ Домашние животные разрешены",
-            zags_allowed=True,
-            zags_rule_ru="✅ ЗАГС разрешен",
-            marriage_certificate_required=False,
-            
-            # Schedule
-            check_in_time='12:00',
-            check_in_rule_ru="С 12:00",
-            check_out_time='11:00',
-            check_out_rule_ru="До 11:00",
-            quiet_hours_start='22:00',
-            quiet_hours_end='07:00',
-            quiet_hours_rule_ru="С 22:00 до 07:00",
-            
-            # Capacity
-            max_guests=8,
-            bedrooms=2,
-            bathrooms=1,
-            floors=1,
-            total_area=120,
-            land_area=4.0,
-            parking_places=1,
-            has_tapchan=True,
-            has_fireplace=False,
-            beds="6 односпальных, 1 двуспальная",
-            beds_ru="Кровати: 6 односпальных, 1 двуспальная",
-            
-            # Kitchen
-            has_kitchen=True,
-            kitchen_ru="🍳 Кухня",
-            has_microwave=True,
-            has_refrigerator=True,
-            has_gas_stove=True,
-            
-            # Outdoor
-            has_summer_kitchen=True,
-            summer_kitchen_ru="🍖 Летняя кухня",
-            has_barbecue=True,
-            barbecue_ru="🍢 Барбекю",
-            has_mangal=True,
-            mangal_ru="🔥 Мангал",
-            
-            # Health & Wellness
-            has_sauna=False,
-            has_hammam=False,
-            has_jacuzzi=False,
-            
-            # Pools
-            has_indoor_pool=False,
-            has_outdoor_pool=True,
-            outdoor_pool_ru="🏊 Открытый бассейн 5x3м²",
-            outdoor_pool_length=5,
-            outdoor_pool_width=3,
-            
-            # Sports & Recreation
-            has_table_tennis=False,
-            has_billiards=False,
-            has_chess=True,
-            chess_ru="♟️ Шахматы",
-            has_hookah=False,
-            
-            # Other
-            has_wifi=True,
-            wifi_ru="📶 WI-FI",
-        )
-        self.stdout.write(f'Created cottage: {cottage3.title_ru}')
-
-        # Cottage 4: Oilalar Uchun
-        cottage4 = Product.objects.create(
-            title_ru="Оила ва улфатларга",
-            title_uz="Oila va Ulfatlar Uchun",
-            title_en="Family and Friends",
-            description_ru="Идеальное место для семей и друзей. Большой двор, мангал, качели для детей.",
-            description_uz="Oila va do'stlar uchun ideal joy. Katta hovli, mangal, bolalar uchun karuselli.",
-            description_en="Perfect place for family and friends. Large yard, BBQ, swings for children.",
-            price=Decimal('800000.00'),
-            
-            # Rules
-            corporate_allowed=True,
-            corporate_rule_ru="✅ Корпоративы разрешены",
-            alcohol_allowed=True,
-            alcohol_rule_ru="✅ Алкоголь разрешен",
-            pets_allowed=True,
-            pets_rule_ru="✅ Домашние животные разрешены",
-            zags_allowed=True,
-            zags_rule_ru="✅ ЗАГС разрешен",
-            marriage_certificate_required=False,
-            
-            # Schedule
-            check_in_time='10:00',
-            check_in_rule_ru="С 10:00",
-            check_out_time='10:00',
-            check_out_rule_ru="До 10:00",
-            quiet_hours_start='23:00',
-            quiet_hours_end='08:00',
-            quiet_hours_rule_ru="С 23:00 до 08:00",
-            
-            # Capacity
-            max_guests=12,
-            bedrooms=3,
-            bathrooms=1,
-            floors=1,
-            total_area=150,
-            land_area=5.0,
-            parking_places=2,
-            has_tapchan=True,
-            has_fireplace=False,
-            beds="10 односпальных",
-            beds_ru="Кровати: 10 односпальных",
-            
-            # Kitchen
-            has_kitchen=True,
-            kitchen_ru="🍳 Кухня",
-            has_microwave=True,
-            has_refrigerator=True,
-            has_gas_stove=True,
-            
-            # Outdoor
-            has_summer_kitchen=True,
-            summer_kitchen_ru="🍖 Летняя кухня",
-            has_barbecue=True,
-            barbecue_ru="🍢 Барбекю",
-            has_mangal=True,
-            mangal_ru="🔥 Мангал",
-            
-            # Pools
-            has_indoor_pool=False,
-            has_outdoor_pool=True,
-            outdoor_pool_ru="🏊 Открытый бассейн",
-            outdoor_pool_length=6,
-            outdoor_pool_width=3,
-            
-            # Other
-            has_wifi=True,
-            wifi_ru="📶 WI-FI",
-        )
-        self.stdout.write(f'Created cottage: {cottage4.title_ru}')
-
-        # Create sample blog posts
         self.stdout.write('Creating sample blog posts...')
-        
         Blog.objects.create(
-            title_ru="Отдых в загородном коттедже",
-            title_uz="Qishloq koteljida dam olish",
-            title_en="Country Cottage Vacation",
-            description_ru="Отличный отдых вдали от городской суеты. Наш коттедж идеально подходит для семейного отдыха. Здесь есть всё для комфортного пребывания: бассейн, сауна, караоке и многое другое.",
-            description_uz="Shahar shovqinidan uzoqda ajoyib dam olish. Bizning kotelj oilaviy dam olish uchun juda mos. Bu yerda hamma narsa bor: basseyn, sauna, karaoke va boshqalar.",
-            description_en="Great vacation away from city noise. Our cottage is perfect for family recreation. Here you have everything for a comfortable stay: pool, sauna, karaoke and more.",
+            title_ru="Лучшие места для отдыха 2026",
+            title_uz="2026-yilning eng yaxshi dam olish maskanlari",
+            title_en="Best Vacation Spots 2026",
+            description_ru="Обзор самых популярных коттеджей в этом сезоне.",
+            description_uz="Ushbu mavsumdagi eng ommabop kottejlar sharhi.",
+            description_en="Overview of the most popular cottages this season.",
         )
         
-        Blog.objects.create(
-            title_ru="Турецкий хаммам и джакузи",
-            title_uz="Turk hammomi va jakuzi",
-            title_en="Turkish Hammam and Jacuzzi",
-            description_ru="Расслабьтесь в нашем турецком хаммаме или насладитесь джакузи после долгого дня. Идеальный способ восстановить силы и энергию.",
-            description_uz="Uzun kundan so'ng bizning Turk hammomida yoki jakuzida dam oling. Kuch va energiya tiklashning ajoyib usuli.",
-            description_en="Relax in our Turkish hammam or enjoy the jacuzzi after a long day. Perfect way to restore strength and energy.",
-        )
-        
-        Blog.objects.create(
-            title_ru="Семейный отдых на природе",
-            title_uz="Tabiatda oilaviy dam olish",
-            title_en="Family Nature Vacation",
-            description_ru="Отличная возможность провести время с семьёй на свежем воздухе. Мангал, летняя кухня, качели для детей - всё для идеального семейного отдыха.",
-            description_uz="Oila bilan tabiatda vaqt o'tkazishning ajoyib imkoniyati. Mangal, yozgi oshxona, bolalar uchun karuselli - hammasi ideal oilaviy dam olish uchun.",
-            description_en="Great opportunity to spend time with family in nature. BBQ, summer kitchen, swings for children - everything for perfect family vacation.",
-        )
-
-        self.stdout.write(self.style.SUCCESS('Successfully created sample data!'))
-        self.stdout.write(f'Total cottages: {Product.objects.count()}')
-        self.stdout.write(f'Total blog posts: {Blog.objects.count()}')
+        self.stdout.write(self.style.SUCCESS(f'Successfully created 25 high-quality multilingual products!'))
