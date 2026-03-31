@@ -26,14 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-eiz!z6!e($o^g5*y0=-ct
 
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = [
-    'api.dachago.uz',
-    'dachago.uz',
-    'www.dachago.uz',
-    'localhost',
-    '127.0.0.1',
-    '.ondigitalocean.app',
-]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
