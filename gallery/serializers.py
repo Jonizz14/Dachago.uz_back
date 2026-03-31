@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Product, Blog, Contact
+from .models import (
+    Product, Blog, Contact, Booking, Review, Activity,
+    Employee, Payment, Service, Announcement, Settings
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -10,14 +13,27 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    locationLat = serializers.CharField(source='latitude', allow_null=True, required=False)
+    locationLon = serializers.CharField(source='longitude', allow_null=True, required=False)
+    location = serializers.CharField(source='location_name', allow_null=True, required=False)
+    busy_dates = serializers.SerializerMethodField()
+    amenities = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
+    bookings_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Product
         fields = [
             'id',
-            # Basic Info (multilingual)
+            'category', 'status',
+            # Basic Info
             'title_ru', 'title_uz', 'title_en',
             'description_ru', 'description_uz', 'description_en',
             'photo', 'price', 'created_at',
+            
+            # Location
+            'locationLat', 'locationLon', 'location',
+            'busy_dates', 'amenities',
             
             # Cottage Rules
             'corporate_allowed', 'corporate_rule_ru', 'corporate_rule_uz', 'corporate_rule_en',
@@ -35,52 +51,71 @@ class ProductSerializer(serializers.ModelSerializer):
             'max_guests', 'bedrooms', 'bathrooms', 'floors', 'total_area', 'land_area', 'parking_places',
             'beds', 'beds_ru', 'beds_uz', 'beds_en',
             
-            # Amenities (additional)
-            'has_tapchan', 'has_fireplace',
-            
-            # Media & Technologies
-            'has_playstation', 'playstation_ru', 'playstation_uz', 'playstation_en',
-            'has_karaoke', 'karaoke_ru', 'karaoke_uz', 'karaoke_en',
-            'has_tv', 'tv_ru', 'tv_uz', 'tv_en',
-            'has_computer', 'computer_ru', 'computer_uz', 'computer_en',
-            
-            # Kitchen
-            'has_kitchen', 'kitchen_ru', 'kitchen_uz', 'kitchen_en',
-            'has_microwave', 'microwave_ru', 'microwave_uz', 'microwave_en',
-            'has_refrigerator', 'refrigerator_ru', 'refrigerator_uz', 'refrigerator_en',
-            'has_gas_stove', 'gas_stove_ru', 'gas_stove_uz', 'gas_stove_en',
-            
-            # Outdoor
-            'has_summer_kitchen', 'summer_kitchen_ru', 'summer_kitchen_uz', 'summer_kitchen_en',
-            'has_barbecue', 'barbecue_ru', 'barbecue_uz', 'barbecue_en',
-            'has_mangal', 'mangal_ru', 'mangal_uz', 'mangal_en',
-            
-            # Health & Wellness
-            'has_sauna', 'sauna_ru', 'sauna_uz', 'sauna_en',
+            # Amenities booleans
+            'has_tapchan', 'has_fireplace', 'has_playstation', 'has_karaoke', 'has_tv', 'has_computer',
+            'has_kitchen', 'has_microwave', 'has_refrigerator', 'has_gas_stove', 'has_summer_kitchen',
+            'has_barbecue', 'has_mangal', 'has_sauna', 'has_salt_room', 'has_hammam', 'has_jacuzzi',
+            'has_indoor_pool', 'has_outdoor_pool', 'has_washing_machine', 'has_iron',
+            'has_table_tennis', 'has_billiards', 'has_chess', 'has_hookah', 'has_wifi',
+
+            # Amenity details
             'sauna_daily_limit_hours', 'sauna_rule_ru', 'sauna_rule_uz', 'sauna_rule_en',
-            'has_salt_room', 'salt_room_ru', 'salt_room_uz', 'salt_room_en',
-            'has_hammam', 'hammam_ru', 'hammam_uz', 'hammam_en',
-            'has_jacuzzi', 'jacuzzi_ru', 'jacuzzi_uz', 'jacuzzi_en',
-            
-            # Pools
-            'has_indoor_pool', 'indoor_pool_ru', 'indoor_pool_uz', 'indoor_pool_en',
             'indoor_pool_length', 'indoor_pool_width', 'indoor_pool_heated',
-            'has_outdoor_pool', 'outdoor_pool_ru', 'outdoor_pool_uz', 'outdoor_pool_en',
             'outdoor_pool_length', 'outdoor_pool_width',
-            
-            # Cleaning Services
-            'has_washing_machine', 'washing_machine_ru', 'washing_machine_uz', 'washing_machine_en',
-            'has_iron', 'iron_ru', 'iron_uz', 'iron_en',
-            
-            # Sports & Recreation
-            'has_table_tennis', 'table_tennis_ru', 'table_tennis_uz', 'table_tennis_en',
-            'has_billiards', 'billiards_ru', 'billiards_uz', 'billiards_en',
-            'has_chess', 'chess_ru', 'chess_uz', 'chess_en',
-            'has_hookah', 'hookah_ru', 'hookah_uz', 'hookah_en',
-            
-            # Other
-            'has_wifi', 'wifi_ru', 'wifi_uz', 'wifi_en',
+            'rating', 'bookings_count',
         ]
+
+    def get_rating(self, obj):
+        from django.db.models import Avg
+        avg = obj.reviews.aggregate(Avg('rating'))['rating__avg']
+        return round(avg, 1) if avg else 0.0
+
+    def get_bookings_count(self, obj):
+        return obj.bookings.count()
+
+    def get_busy_dates(self, obj):
+        return obj.availability.filter(is_busy=True).values_list('date', flat=True)
+
+    def get_amenities(self, obj):
+        labels = {
+            'has_tapchan': {'ru': 'Тапчан', 'uz': 'Tapchan', 'en': 'Tapchan'},
+            'has_fireplace': {'ru': 'Камин', 'uz': 'Kamin', 'en': 'Fireplace'},
+            'has_playstation': {'ru': 'PlayStation', 'uz': 'PlayStation', 'en': 'PlayStation'},
+            'has_karaoke': {'ru': 'Караоке', 'uz': 'Karaoke', 'en': 'Karaoke'},
+            'has_tv': {'ru': 'Телевизор', 'uz': 'Televizor', 'en': 'TV'},
+            'has_computer': {'ru': 'Компьютер', 'uz': 'Kompyuter', 'en': 'Computer'},
+            'has_kitchen': {'ru': 'Кухня', 'uz': 'Oshxona', 'en': 'Kitchen'},
+            'has_microwave': {'ru': 'Микроволновая печь', 'uz': "Mikroto'lqin pech", 'en': 'Microwave'},
+            'has_refrigerator': {'ru': 'Холодильник', 'uz': 'Muzlatgich', 'en': 'Refrigerator'},
+            'has_gas_stove': {'ru': 'Газовая плита', 'uz': 'Gaz plita', 'en': 'Gas Stove'},
+            'has_summer_kitchen': {'ru': 'Летняя кухня', 'uz': 'Yozgi oshxona', 'en': 'Summer Kitchen'},
+            'has_barbecue': {'ru': 'Барбекю', 'uz': 'Barbekyu', 'en': 'Barbecue'},
+            'has_mangal': {'ru': 'Мангал', 'uz': 'Mangal', 'en': 'BBQ'},
+            'has_sauna': {'ru': 'Финская сауна', 'uz': 'Fin saunasi', 'en': 'Finnish Sauna'},
+            'has_salt_room': {'ru': 'Соляная комната', 'uz': 'Tuz xonasi', 'en': 'Salt Room'},
+            'has_hammam': {'ru': 'Турецкий хаммам', 'uz': 'Turk hammomi', 'en': 'Turkish Hammam'},
+            'has_jacuzzi': {'ru': 'Джакузи', 'uz': 'Jakuzi', 'en': 'Jacuzzi'},
+            'has_indoor_pool': {'ru': 'Крытый бассейн', 'uz': 'Yopiq basseyn', 'en': 'Indoor Pool'},
+            'has_outdoor_pool': {'ru': 'Открытый бассейн', 'uz': 'Ochiq basseyn', 'en': 'Outdoor Pool'},
+            'has_washing_machine': {'ru': 'Стиральная машина', 'uz': 'Kir yuvish mashinasi', 'en': 'Washing Machine'},
+            'has_iron': {'ru': 'Утюг', 'uz': 'Dazmol', 'en': 'Iron'},
+            'has_table_tennis': {'ru': 'Настольный теннис', 'uz': 'Stol tennisi', 'en': 'Table Tennis'},
+            'has_billiards': {'ru': 'Бильярд', 'uz': 'Bilyard', 'en': 'Billiards'},
+            'has_chess': {'ru': 'Шахматы', 'uz': 'Shaxmat', 'en': 'Chess'},
+            'has_hookah': {'ru': 'Кальян', 'uz': 'Kalyan', 'en': 'Hookah'},
+            'has_wifi': {'ru': 'WI-FI', 'uz': 'WI-FI', 'en': 'WI-FI'},
+        }
+        
+        result = []
+        for field, names in labels.items():
+            if getattr(obj, field, False):
+                result.append({
+                    'slug': field.replace('has_', ''),
+                    'name_ru': names['ru'],
+                    'name_uz': names['uz'],
+                    'name_en': names['en']
+                })
+        return result
 
 
 class BlogSerializer(serializers.ModelSerializer):
@@ -102,3 +137,51 @@ class ContactSerializer(serializers.ModelSerializer):
             'created_at', 'is_read'
         ]
         read_only_fields = ['created_at', 'is_read']
+
+
+class BookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = '__all__'
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'product', 'user', 'user_name', 'rating', 'comment', 'status', 'created_at']
+
+
+class ActivitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Activity
+        fields = '__all__'
+
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = '__all__'
+
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = '__all__'
+
+
+class ServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = '__all__'
+
+
+class AnnouncementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Announcement
+        fields = '__all__'
+
+
+class SettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Settings
+        fields = '__all__'

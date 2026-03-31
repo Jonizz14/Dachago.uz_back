@@ -15,6 +15,27 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # Categories & Status
+    CATEGORY_CHOICES = (
+        ('Mountain', 'Mountain'),
+        ('Villa', 'Villa'),
+        ('Lake', 'Lake'),
+        ('Cottage', 'Cottage'),
+        ('Beach', 'Beach'),
+    )
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='Cottage')
+    
+    STATUS_CHOICES = (
+        ('active', 'Active'),
+        ('inactive', 'Inactive'),
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+
+    # Location Info
+    latitude = models.CharField(max_length=50, blank=True, null=True, verbose_name="Latitude")
+    longitude = models.CharField(max_length=50, blank=True, null=True, verbose_name="Longitude")
+    location_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Location Name")
+
     # Cottage Rules (multilingual)
     corporate_allowed = models.BooleanField(default=True)
     corporate_rule_ru = models.TextField(blank=True, null=True, verbose_name="Корпоратив")
@@ -76,145 +97,56 @@ class Product(models.Model):
     has_tapchan = models.BooleanField(default=False, verbose_name="Тапчан")
     has_fireplace = models.BooleanField(default=False, verbose_name="Камин")
 
-    # Media & Technologies (multilingual)
-    has_playstation = models.BooleanField(default=False)
-    playstation_ru = models.TextField(blank=True, null=True, verbose_name="Плейстейшн")
-    playstation_uz = models.TextField(blank=True, null=True, verbose_name="Playstation")
-    playstation_en = models.TextField(blank=True, null=True, verbose_name="PlayStation")
-    
-    has_karaoke = models.BooleanField(default=False)
-    karaoke_ru = models.TextField(blank=True, null=True, verbose_name="Караоке")
-    karaoke_uz = models.TextField(blank=True, null=True, verbose_name="Karaoke")
-    karaoke_en = models.TextField(blank=True, null=True, verbose_name="Karaoke")
-    
-    has_tv = models.BooleanField(default=False)
-    tv_ru = models.TextField(blank=True, null=True, verbose_name="Телевизор")
-    tv_uz = models.TextField(blank=True, null=True, verbose_name="Televizor")
-    tv_en = models.TextField(blank=True, null=True, verbose_name="TV")
-    
-    has_computer = models.BooleanField(default=False)
-    computer_ru = models.TextField(blank=True, null=True, verbose_name="Компьютер")
-    computer_uz = models.TextField(blank=True, null=True, verbose_name="Kompyuter")
-    computer_en = models.TextField(blank=True, null=True, verbose_name="Computer")
+    # Media & Technologies
+    has_playstation = models.BooleanField(default=False, verbose_name="PlayStation")
+    has_karaoke = models.BooleanField(default=False, verbose_name="Karaoke")
+    has_tv = models.BooleanField(default=False, verbose_name="TV")
+    has_computer = models.BooleanField(default=False, verbose_name="Computer")
 
-    # Kitchen (multilingual)
-    has_kitchen = models.BooleanField(default=False)
-    kitchen_ru = models.TextField(blank=True, null=True, verbose_name="Кухня")
-    kitchen_uz = models.TextField(blank=True, null=True, verbose_name="Oshxona")
-    kitchen_en = models.TextField(blank=True, null=True, verbose_name="Kitchen")
-    
-    has_microwave = models.BooleanField(default=False)
-    microwave_ru = models.TextField(blank=True, null=True, verbose_name="Микроволновая печь")
-    microwave_uz = models.TextField(blank=True, null=True, verbose_name="Mikroto'lqin pech")
-    microwave_en = models.TextField(blank=True, null=True, verbose_name="Microwave")
-    
-    has_refrigerator = models.BooleanField(default=False)
-    refrigerator_ru = models.TextField(blank=True, null=True, verbose_name="Холодильник")
-    refrigerator_uz = models.TextField(blank=True, null=True, verbose_name="Muzlatgich")
-    refrigerator_en = models.TextField(blank=True, null=True, verbose_name="Refrigerator")
-    
-    has_gas_stove = models.BooleanField(default=False)
-    gas_stove_ru = models.TextField(blank=True, null=True, verbose_name="Газовая плита")
-    gas_stove_uz = models.TextField(blank=True, null=True, verbose_name="Gaz plita")
-    gas_stove_en = models.TextField(blank=True, null=True, verbose_name="Gas Stove")
+    # Kitchen
+    has_kitchen = models.BooleanField(default=False, verbose_name="Kitchen")
+    has_microwave = models.BooleanField(default=False, verbose_name="Microwave")
+    has_refrigerator = models.BooleanField(default=False, verbose_name="Refrigerator")
+    has_gas_stove = models.BooleanField(default=False, verbose_name="Gas Stove")
 
-    # Outdoor (multilingual)
-    has_summer_kitchen = models.BooleanField(default=False)
-    summer_kitchen_ru = models.TextField(blank=True, null=True, verbose_name="Летняя кухня")
-    summer_kitchen_uz = models.TextField(blank=True, null=True, verbose_name="Yozgi oshxona")
-    summer_kitchen_en = models.TextField(blank=True, null=True, verbose_name="Summer Kitchen")
-    
-    has_barbecue = models.BooleanField(default=False)
-    barbecue_ru = models.TextField(blank=True, null=True, verbose_name="Барбекю")
-    barbecue_uz = models.TextField(blank=True, null=True, verbose_name="Barbekyu")
-    barbecue_en = models.TextField(blank=True, null=True, verbose_name="Barbecue")
-    
-    has_mangal = models.BooleanField(default=False)
-    mangal_ru = models.TextField(blank=True, null=True, verbose_name="Мангал")
-    mangal_uz = models.TextField(blank=True, null=True, verbose_name="Mangal")
-    mangal_en = models.TextField(blank=True, null=True, verbose_name="BBQ")
+    # Outdoor
+    has_summer_kitchen = models.BooleanField(default=False, verbose_name="Summer Kitchen")
+    has_barbecue = models.BooleanField(default=False, verbose_name="Barbecue")
+    has_mangal = models.BooleanField(default=False, verbose_name="BBQ")
 
-    # Health & Wellness (multilingual)
-    has_sauna = models.BooleanField(default=False)
-    sauna_ru = models.TextField(blank=True, null=True, verbose_name="Финская сауна")
-    sauna_uz = models.TextField(blank=True, null=True, verbose_name="Fin saunasi")
-    sauna_en = models.TextField(blank=True, null=True, verbose_name="Finnish Sauna")
+    # Health & Wellness
+    has_sauna = models.BooleanField(default=False, verbose_name="Sauna")
+    sauna_daily_limit_hours = models.IntegerField(blank=True, null=True, verbose_name="Sauna Daily Limit (Hours)")
+    sauna_rule_ru = models.TextField(blank=True, null=True, verbose_name="Правила сауны (RU)")
+    sauna_rule_uz = models.TextField(blank=True, null=True, verbose_name="Sauna qoidalari (UZ)")
+    sauna_rule_en = models.TextField(blank=True, null=True, verbose_name="Sauna rules (EN)")
     
-    sauna_daily_limit_hours = models.IntegerField(blank=True, null=True)
-    sauna_rule_ru = models.TextField(blank=True, null=True, verbose_name="Дневной лимит сауны")
-    sauna_rule_uz = models.TextField(blank=True, null=True, verbose_name="Sauna kunlik limiti")
-    sauna_rule_en = models.TextField(blank=True, null=True, verbose_name="Sauna daily limit")
-    
-    has_salt_room = models.BooleanField(default=False)
-    salt_room_ru = models.TextField(blank=True, null=True, verbose_name="Соляная комната")
-    salt_room_uz = models.TextField(blank=True, null=True, verbose_name="Tuz xonasi")
-    salt_room_en = models.TextField(blank=True, null=True, verbose_name="Salt Room")
-    
-    has_hammam = models.BooleanField(default=False)
-    hammam_ru = models.TextField(blank=True, null=True, verbose_name="Турецкий хаммам")
-    hammam_uz = models.TextField(blank=True, null=True, verbose_name="Turk hammomi")
-    hammam_en = models.TextField(blank=True, null=True, verbose_name="Turkish Hammam")
-    
-    has_jacuzzi = models.BooleanField(default=False)
-    jacuzzi_ru = models.TextField(blank=True, null=True, verbose_name="Джакузи")
-    jacuzzi_uz = models.TextField(blank=True, null=True, verbose_name="Jakuzi")
-    jacuzzi_en = models.TextField(blank=True, null=True, verbose_name="Jacuzzi")
+    has_salt_room = models.BooleanField(default=False, verbose_name="Salt Room")
+    has_hammam = models.BooleanField(default=False, verbose_name="Hammam")
+    has_jacuzzi = models.BooleanField(default=False, verbose_name="Jacuzzi")
 
     # Pools
-    has_indoor_pool = models.BooleanField(default=False)
-    indoor_pool_ru = models.TextField(blank=True, null=True, verbose_name="Крытый бассейн")
-    indoor_pool_uz = models.TextField(blank=True, null=True, verbose_name="Yopiq basseyn")
-    indoor_pool_en = models.TextField(blank=True, null=True, verbose_name="Indoor Pool")
+    has_indoor_pool = models.BooleanField(default=False, verbose_name="Indoor Pool")
+    indoor_pool_length = models.IntegerField(blank=True, null=True, verbose_name="Indoor Pool Length")
+    indoor_pool_width = models.IntegerField(blank=True, null=True, verbose_name="Indoor Pool Width")
+    indoor_pool_heated = models.BooleanField(default=False, verbose_name="Indoor Pool Heated")
     
-    indoor_pool_length = models.IntegerField(blank=True, null=True)
-    indoor_pool_width = models.IntegerField(blank=True, null=True)
-    indoor_pool_heated = models.BooleanField(default=False)
-    
-    has_outdoor_pool = models.BooleanField(default=False)
-    outdoor_pool_ru = models.TextField(blank=True, null=True, verbose_name="Открытый бассейн")
-    outdoor_pool_uz = models.TextField(blank=True, null=True, verbose_name="Ochiq basseyn")
-    outdoor_pool_en = models.TextField(blank=True, null=True, verbose_name="Outdoor Pool")
-    
-    outdoor_pool_length = models.IntegerField(blank=True, null=True)
-    outdoor_pool_width = models.IntegerField(blank=True, null=True)
+    has_outdoor_pool = models.BooleanField(default=False, verbose_name="Outdoor Pool")
+    outdoor_pool_length = models.IntegerField(blank=True, null=True, verbose_name="Outdoor Pool Length")
+    outdoor_pool_width = models.IntegerField(blank=True, null=True, verbose_name="Outdoor Pool Width")
 
-    # Cleaning Services (multilingual)
-    has_washing_machine = models.BooleanField(default=False)
-    washing_machine_ru = models.TextField(blank=True, null=True, verbose_name="Стиральная машина")
-    washing_machine_uz = models.TextField(blank=True, null=True, verbose_name="Kir yuvish mashinasi")
-    washing_machine_en = models.TextField(blank=True, null=True, verbose_name="Washing Machine")
-    
-    has_iron = models.BooleanField(default=False)
-    iron_ru = models.TextField(blank=True, null=True, verbose_name="Утюг")
-    iron_uz = models.TextField(blank=True, null=True, verbose_name="Dazmol")
-    iron_en = models.TextField(blank=True, null=True, verbose_name="Iron")
+    # Cleaning Services
+    has_washing_machine = models.BooleanField(default=False, verbose_name="Washing Machine")
+    has_iron = models.BooleanField(default=False, verbose_name="Iron")
 
-    # Sports & Recreation (multilingual)
-    has_table_tennis = models.BooleanField(default=False)
-    table_tennis_ru = models.TextField(blank=True, null=True, verbose_name="Настольный теннис")
-    table_tennis_uz = models.TextField(blank=True, null=True, verbose_name="Stol tennisi")
-    table_tennis_en = models.TextField(blank=True, null=True, verbose_name="Table Tennis")
-    
-    has_billiards = models.BooleanField(default=False)
-    billiards_ru = models.TextField(blank=True, null=True, verbose_name="Бильярд")
-    billiards_uz = models.TextField(blank=True, null=True, verbose_name="Bilyard")
-    billiards_en = models.TextField(blank=True, null=True, verbose_name="Billiards")
-    
-    has_chess = models.BooleanField(default=False)
-    chess_ru = models.TextField(blank=True, null=True, verbose_name="Шахматы")
-    chess_uz = models.TextField(blank=True, null=True, verbose_name="Shaxmat")
-    chess_en = models.TextField(blank=True, null=True, verbose_name="Chess")
-    
-    has_hookah = models.BooleanField(default=False)
-    hookah_ru = models.TextField(blank=True, null=True, verbose_name="Кальян")
-    hookah_uz = models.TextField(blank=True, null=True, verbose_name="Kalyan")
-    hookah_en = models.TextField(blank=True, null=True, verbose_name="Hookah")
+    # Sports & Recreation
+    has_table_tennis = models.BooleanField(default=False, verbose_name="Table Tennis")
+    has_billiards = models.BooleanField(default=False, verbose_name="Billiards")
+    has_chess = models.BooleanField(default=False, verbose_name="Chess")
+    has_hookah = models.BooleanField(default=False, verbose_name="Hookah")
 
-    # Other (multilingual)
-    has_wifi = models.BooleanField(default=False)
-    wifi_ru = models.TextField(blank=True, null=True, verbose_name="WI-FI")
-    wifi_uz = models.TextField(blank=True, null=True, verbose_name="WI-FI")
-    wifi_en = models.TextField(blank=True, null=True, verbose_name="WI-FI")
+    # Other
+    has_wifi = models.BooleanField(default=False, verbose_name="Wi-Fi")
 
     def __str__(self):
         return self.title_ru or self.title_uz or self.title_en or "Product"
@@ -262,3 +194,171 @@ class Contact(models.Model):
         verbose_name = "Contact / Bog'lanish"
         verbose_name_plural = "Contacts / Bog'lanishlar"
         ordering = ['-created_at']
+
+
+class CottageAvailability(models.Model):
+    product = models.ForeignKey(Product, related_name='availability', on_delete=models.CASCADE)
+    date = models.DateField()
+    is_busy = models.BooleanField(default=True)
+    
+    class Meta:
+        verbose_name = "Cottage Availability / Bron qilingan kunlar"
+        verbose_name_plural = "Cottages Availability / Bron qilingan kunlar"
+        unique_together = ('product', 'date')
+        ordering = ['date']
+
+    def __str__(self):
+        return f"{self.product.title} - {self.date} ({'Band' if self.is_busy else 'Bo`sh'})"
+
+
+class Booking(models.Model):
+    STATUS_CHOICES = (
+        ('confirmed', 'Confirmed'),
+        ('pending', 'Pending'),
+        ('cancelled', 'Cancelled'),
+    )
+    
+    product = models.ForeignKey(Product, related_name='bookings', on_delete=models.CASCADE)
+    user = models.ForeignKey('auth.User', related_name='bookings', on_delete=models.CASCADE, null=True, blank=True)
+    user_name = models.CharField(max_length=255, help_text="Guest name if user is not registered")
+    date = models.DateField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    price = models.DecimalField(max_digits=12, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.product.title} - {self.user_name} ({self.status})"
+
+
+class Review(models.Model):
+    STATUS_CHOICES = (
+        ('approved', 'Approved'),
+        ('pending', 'Pending'),
+        ('rejected', 'Rejected'),
+    )
+    product = models.ForeignKey(Product, related_name='reviews', on_delete=models.CASCADE)
+    user = models.ForeignKey('auth.User', related_name='reviews', on_delete=models.CASCADE, null=True, blank=True)
+    user_name = models.CharField(max_length=255)
+    rating = models.IntegerField(default=5)
+    comment = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='approved')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.product.title} - {self.rating} stars"
+
+
+class Activity(models.Model):
+    ICON_CHOICES = (
+        ('user', 'User'),
+        ('shopping', 'Shopping'),
+        ('message', 'Message'),
+        ('dollar', 'Dollar'),
+        ('calendar', 'Calendar'),
+    )
+    
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    icon_type = models.CharField(max_length=20, choices=ICON_CHOICES, default='user')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name_plural = "Activities"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class Employee(models.Model):
+    STATUS_CHOICES = (
+        ('active', 'Active'),
+        ('inactive', 'Inactive'),
+    )
+    name = models.CharField(max_length=255)
+    position = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=50)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Payment(models.Model):
+    STATUS_CHOICES = (
+        ('completed', 'Completed'),
+        ('pending', 'Pending'),
+        ('failed', 'Failed'),
+    )
+    transaction_id = models.CharField(max_length=100, unique=True)
+    customer_name = models.CharField(max_length=255)
+    cottage_name = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    method = models.CharField(max_length=50)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.transaction_id} - {self.amount}"
+
+
+class Service(models.Model):
+    STATUS_CHOICES = (
+        ('active', 'Active'),
+        ('inactive', 'Inactive'),
+    )
+    name = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=12, decimal_places=2)
+    duration = models.CharField(max_length=100, help_text="e.g. Per Day, Per Hour")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Announcement(models.Model):
+    STATUS_CHOICES = (
+        ('active', 'Active'),
+        ('expired', 'Expired'),
+    )
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    date = models.DateField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+    views = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+
+class Settings(models.Model):
+    site_name = models.CharField(max_length=255, default='DachaGo')
+    contact_email = models.EmailField(default='info@dachago.uz')
+    contact_phone = models.CharField(max_length=50, default='+998 90 123-45-67')
+    default_language = models.CharField(max_length=10, default='uz')
+    address = models.TextField(default='Tashkent, Uzbekistan')
+    site_description = models.TextField(default='Find your perfect dacha in Uzbekistan')
+    
+    # Notifications
+    email_notifications = models.BooleanField(default=True)
+    booking_notifications = models.BooleanField(default=True)
+    review_notifications = models.BooleanField(default=True)
+    payment_notifications = models.BooleanField(default=True)
+    newsletter = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name_plural = "Settings"
+
+    def __str__(self):
+        return "Global Settings"

@@ -23,5 +23,12 @@ urlpatterns = [
 ]
 
 
+# Productionda ham media fayllarni ko'rsatish
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    from django.views.static import serve
+    urlpatterns += [
+        path('media/<path:path>', serve, {'document_root': settings.MEDIA_ROOT}),
+        path('static/<path:path>', serve, {'document_root': settings.STATIC_ROOT}),
+    ]
