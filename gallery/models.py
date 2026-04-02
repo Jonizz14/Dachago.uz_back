@@ -17,11 +17,12 @@ class Product(models.Model):
 
     # Categories & Status
     CATEGORY_CHOICES = (
-        ('Mountain', 'Mountain'),
-        ('Villa', 'Villa'),
-        ('Lake', 'Lake'),
-        ('Cottage', 'Cottage'),
-        ('Beach', 'Beach'),
+        ('Amirsoy', 'Amirsoy'),
+        ('Charvak', 'Charvak'),
+        ('Chimgan', 'Chimgan'),
+        ('Oqtosh', 'Oqtosh'),
+        ('Parkent', 'Parkent'),
+        ('Sijjak', 'Sijjak'),
     )
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='Cottage')
     
@@ -30,6 +31,7 @@ class Product(models.Model):
         ('inactive', 'Inactive'),
     )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+    rating = models.DecimalField(max_digits=3, decimal_places=1, default=0.0)
 
     # Location Info
     latitude = models.CharField(max_length=50, blank=True, null=True, verbose_name="Latitude")
@@ -158,6 +160,15 @@ class Product(models.Model):
     @property
     def description(self):
         return self.description_ru or self.description_uz or self.description_en
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='product_gallery/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Image for {self.product.title}"
 
 
 class Blog(models.Model):

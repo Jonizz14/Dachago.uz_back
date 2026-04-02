@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Product, Blog, Contact, CottageAvailability, 
+    Product, ProductImage, Blog, Contact, CottageAvailability, 
     Employee, Payment, Service, Announcement, Booking, Review, Activity, Settings
 )
 
@@ -10,16 +10,21 @@ class AvailabilityInline(admin.TabularInline):
     extra = 1
 
 
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 3
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('title_ru', 'price', 'category', 'status', 'max_guests', 'bedrooms', 'bathrooms', 'created_at')
     search_fields = ('title_ru', 'title_uz', 'title_en', 'location_name')
     list_filter = ('category', 'status', 'created_at', 'price', 'bedrooms', 'bathrooms', 'has_tapchan')
-    inlines = [AvailabilityInline]
+    inlines = [AvailabilityInline, ProductImageInline]
     
     fieldsets = (
         ('Basic Info', {
-            'fields': ('title_ru', 'title_uz', 'title_en', 'description_ru', 'description_uz', 'description_en', 'photo', 'price', 'category', 'status')
+            'fields': ('title_ru', 'title_uz', 'title_en', 'description_ru', 'description_uz', 'description_en', 'photo', 'price', 'category', 'status', 'rating')
         }),
         ('Location', {
             'fields': ('latitude', 'longitude', 'location_name')

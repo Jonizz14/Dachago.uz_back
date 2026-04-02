@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from gallery.models import Product, Blog, CottageAvailability, Booking, Review, Activity, Employee, Payment, Service, Announcement, Settings
+from gallery.models import Product, ProductImage, Blog, CottageAvailability, Booking, Review, Activity, Employee, Payment, Service, Announcement, Settings
 from django.contrib.auth.models import User
 import random
 from datetime import date, timedelta, datetime
@@ -18,9 +18,13 @@ class Command(BaseCommand):
             self.stdout.write('Superuser created: admin/admin123')
 
         # 3. Create Products (Dachas)
-        categories = ['Mountain', 'Villa', 'Lake', 'Cottage', 'Beach']
+        categories = ['Amirsoy', 'Charvak', 'Chimgan', 'Oqtosh', 'Parkent', 'Sijjak']
         cities = ['Bochiston', 'Chimyon', 'Amirsoy', 'Charvoq', 'Xumsan', 'Oqtosh']
         
+        Product.objects.all().delete()
+        Payment.objects.all().delete()
+        Review.objects.all().delete()
+        Booking.objects.all().delete()
         products = []
         for i in range(1, 11):
             category = random.choice(categories)
@@ -62,8 +66,17 @@ class Command(BaseCommand):
                 has_sauna=random.choice([True, False]),
                 has_indoor_pool=random.choice([True, False]),
                 has_outdoor_pool=True,
-                has_wifi=True
+                has_wifi=True,
+                rating=round(random.uniform(3.0, 5.0), 1)
             )
+            
+            # Add gallery images
+            for _ in range(random.randint(3, 6)):
+                ProductImage.objects.create(
+                    product=p,
+                    image=f'products/sample_gallery.jpg'
+                )
+            
             products.append(p)
             
         self.stdout.write(f'Created {len(products)} products.')

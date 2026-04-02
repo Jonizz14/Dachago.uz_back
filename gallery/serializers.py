@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import (
-    Product, Blog, Contact, Booking, Review, Activity,
+    Product, ProductImage, Blog, Contact, Booking, Review, Activity,
     Employee, Payment, Service, Announcement, Settings
 )
 
@@ -12,13 +12,20 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
 
 
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = ['id', 'image', 'created_at']
+
+
 class ProductSerializer(serializers.ModelSerializer):
     locationLat = serializers.CharField(source='latitude', allow_null=True, required=False)
     locationLon = serializers.CharField(source='longitude', allow_null=True, required=False)
     location = serializers.CharField(source='location_name', allow_null=True, required=False)
     busy_dates = serializers.SerializerMethodField()
     amenities = serializers.SerializerMethodField()
-    rating = serializers.SerializerMethodField()
+    images = ProductImageSerializer(many=True, read_only=True)
+    rating = serializers.FloatField()
     bookings_count = serializers.SerializerMethodField()
 
     class Meta:
@@ -62,13 +69,8 @@ class ProductSerializer(serializers.ModelSerializer):
             'sauna_daily_limit_hours', 'sauna_rule_ru', 'sauna_rule_uz', 'sauna_rule_en',
             'indoor_pool_length', 'indoor_pool_width', 'indoor_pool_heated',
             'outdoor_pool_length', 'outdoor_pool_width',
-            'rating', 'bookings_count',
+            'rating', 'bookings_count', 'images',
         ]
-
-    def get_rating(self, obj):
-        from django.db.models import Avg
-        avg = obj.reviews.aggregate(Avg('rating'))['rating__avg']
-        return round(avg, 1) if avg else 0.0
 
     def get_bookings_count(self, obj):
         return obj.bookings.count()
