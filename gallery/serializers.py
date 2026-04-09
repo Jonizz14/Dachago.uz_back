@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import (
     Product, ProductImage, Blog, Contact, Booking, Review, Activity,
-    Employee, Payment, Service, Announcement, Settings
+    Employee, Payment, Service, Announcement, AnnouncementImage, Settings
 )
 
 
@@ -136,9 +136,9 @@ class ContactSerializer(serializers.ModelSerializer):
         model = Contact
         fields = [
             'id', 'name', 'email', 'phone', 'subject', 'message',
-            'created_at', 'is_read'
+            'created_at', 'is_read', 'status'
         ]
-        read_only_fields = ['created_at', 'is_read']
+        read_only_fields = ['created_at', 'is_read', 'status']
 
 
 class BookingSerializer(serializers.ModelSerializer):
@@ -177,10 +177,21 @@ class ServiceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class AnnouncementImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AnnouncementImage
+        fields = ['id', 'image', 'created_at']
+
+
 class AnnouncementSerializer(serializers.ModelSerializer):
+    images = AnnouncementImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = Announcement
-        fields = '__all__'
+        fields = [
+            'id', 'title', 'content', 'photo', 'date', 
+            'status', 'views', 'created_at', 'images'
+        ]
 
 
 class SettingsSerializer(serializers.ModelSerializer):

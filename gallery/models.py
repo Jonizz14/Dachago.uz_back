@@ -198,6 +198,13 @@ class Contact(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False, verbose_name="Прочитано / O'qilgan")
     
+    STATUS_CHOICES = (
+        ('new', 'New'),
+        ('in_progress', 'In Progress'),
+        ('resolved', 'Resolved'),
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
+    
     def __str__(self):
         return f"{self.name} - {self.email}"
     
@@ -344,6 +351,7 @@ class Announcement(models.Model):
     )
     title = models.CharField(max_length=255)
     content = models.TextField()
+    photo = models.ImageField(upload_to='announcements/', blank=True, null=True)
     date = models.DateField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
     views = models.IntegerField(default=0)
@@ -353,6 +361,15 @@ class Announcement(models.Model):
         return self.title
 
 
+class AnnouncementImage(models.Model):
+    announcement = models.ForeignKey(Announcement, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='announcement_gallery/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Image for {self.announcement.title}"
+
+
 class Settings(models.Model):
     site_name = models.CharField(max_length=255, default='DachaGo')
     contact_email = models.EmailField(default='info@dachago.uz')
@@ -360,6 +377,12 @@ class Settings(models.Model):
     default_language = models.CharField(max_length=10, default='uz')
     address = models.TextField(default='Tashkent, Uzbekistan')
     site_description = models.TextField(default='Find your perfect dacha in Uzbekistan')
+    
+    # Social Media
+    telegram_link = models.URLField(blank=True, null=True, default='https://t.me/dachago')
+    instagram_link = models.URLField(blank=True, null=True, default='https://instagram.com/dachago')
+    facebook_link = models.URLField(blank=True, null=True, default='https://facebook.com/dachago')
+    youtube_link = models.URLField(blank=True, null=True, default='https://youtube.com/dachago')
     
     # Notifications
     email_notifications = models.BooleanField(default=True)

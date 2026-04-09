@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Product, ProductImage, Blog, Contact, CottageAvailability, 
-    Employee, Payment, Service, Announcement, Booking, Review, Activity, Settings
+    Employee, Payment, Service, Announcement, AnnouncementImage, Booking, Review, Activity, Settings
 )
 
 
@@ -12,6 +12,11 @@ class AvailabilityInline(admin.TabularInline):
 
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
+    extra = 3
+
+
+class AnnouncementImageInline(admin.TabularInline):
+    model = AnnouncementImage
     extra = 3
 
 
@@ -65,9 +70,9 @@ class BlogAdmin(admin.ModelAdmin):
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'phone', 'subject', 'created_at', 'is_read')
+    list_display = ('name', 'email', 'phone', 'subject', 'status', 'created_at', 'is_read')
     search_fields = ('name', 'email', 'message')
-    list_filter = ('is_read', 'created_at')
+    list_filter = ('status', 'is_read', 'created_at')
     readonly_fields = ('created_at',)
     ordering = ['-created_at']
 
@@ -98,6 +103,7 @@ class AnnouncementAdmin(admin.ModelAdmin):
     list_display = ('title', 'date', 'status', 'views')
     list_filter = ('status', 'date')
     search_fields = ('title', 'content')
+    inlines = [AnnouncementImageInline]
 
 
 @admin.register(Booking)
